@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import api from "../Api/axios";
 import Navbar from "../components/NavBar";
+// import jobCard from "../components/JobCard";
+// import EditJobForm from "../components/Editjob";
 
 const LIMIT = 5;
 
