@@ -35,13 +35,12 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
+    <div className="min-h-screen flex items-center justify-center bg-[#222]">
       {/* Outer container */}
-      <div className="w-[420px] p-8 rounded-2xl bg-[#142734] shadow-2xl">
+      <div className="w-[420px] h-[350px] p-8 rounded-2xl bg-[#111] shadow-2xl">
         {/* Inner card */}
-        <div className="bg-[#2b4257] rounded-xl p-8">
-          <h2 className="text-center text-gray-200 tracking-widest mb-8">
-            CLIENT LOGIN
+          <h2 className="text-center font-bold text-3xl text-gray-200 tracking-widest mb-8">
+            WELCOME
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -56,7 +55,7 @@ const Login = () => {
                 placeholder="Username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-100 text-sm px-3 py-2 rounded outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full bg-[#4444] text-sm px-3 py-2 rounded text-gray-300 outline-none focus:ring-2 focus:ring-white-500"
               />
             </div>
 
@@ -71,26 +70,25 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-100 text-sm px-3 py-2 rounded outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full bg-[#4444] text-sm px-3 py-2 rounded text-gray-300 outline-none focus:ring-2 focus:ring-white-500"
               />
             </div>
 
             {/* Remember + Button */}
             <div className="flex items-center justify-between pt-2">
               <label className="flex items-center gap-2 text-gray-300 text-xs">
-                <input type="checkbox" className="accent-green-500" />
+                <input type="checkbox" className="accent-blue-500" />
                 Remember me
               </label>
 
               <button
                 type="submit"
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 text-sm rounded"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 text-sm rounded"
               >
                 LOGIN
               </button>
             </div>
           </form>
-        </div>
       </div>
     </div>
   );
