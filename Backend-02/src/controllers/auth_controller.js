@@ -7,28 +7,55 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "All fields required" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(
+    // INSERT USER
+    const [result] = await pool.query(
       "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
       [name, email, hashedPassword, role],
     );
 
-    res.status(201).json({ message: "User registered" });
+    // ✅ GET INSERTED USER ID
+    const userId = result.insertId;
+
+    // ✅ CREATE ACCESS TOKEN
+    const accessToken = jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
+      expiresIn: "15m",
+    });
+
+    // ✅ CREATE REFRESH TOKEN
+    const refreshToken = jwt.sign(
+      { id: userId },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    // ✅ STORE REFRESH TOKEN
+    await pool.query(
+      `INSERT INTO refresh_tokens (user_id, token, expires_at)
+       VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))`,
+      [userId, refreshToken],
+    );
+
+    // ✅ SEND TOKENS
+    res.status(201).json({
+      accessToken,
+      refreshToken,
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Serever error" });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 // Login
 const login = async (req, res) => {
   // console.log("JWT_SECRET:", process.env.JWT_SECRET);
-// console.log("JWT_REFRESH_SECRET:", process.env.JWT_REFRESH_SECRET);
+  // console.log("JWT_REFRESH_SECRET:", process.env.JWT_REFRESH_SECRET);
 
   try {
     const { email, password } = req.body;
@@ -48,7 +75,7 @@ const login = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -67,12 +94,11 @@ const login = async (req, res) => {
       { expiresIn: "7d" }, // 7 days
     );
 
-
     // Store refresh token in separate table
     await pool.query(
       `INSERT INTO refresh_tokens (user_id, token, expires_at)
        VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))`,
-      [user.id, refreshToken]
+      [user.id, refreshToken],
     );
 
     //  Send both tokens to client
@@ -98,7 +124,7 @@ const logout = async (req, res) => {
     // Revoke refresh token
     const [result] = await pool.query(
       "UPDATE refresh_tokens SET is_revoked = true WHERE token = ?",
-      [refreshToken]
+      [refreshToken],
     );
 
     // Optional safety check
@@ -107,7 +133,6 @@ const logout = async (req, res) => {
     }
 
     res.status(200).json({ message: "Logged out successfully" });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -120,11 +145,10 @@ const logoutAll = async (req, res) => {
 
   await pool.query(
     "UPDATE refresh_tokens SET is_revoked = true WHERE user_id = ?",
-    [userId]
+    [userId],
   );
 
   res.json({ message: "Logged out from all devices" });
 };
-
 
 module.exports = { register, login, logout, logoutAll };
