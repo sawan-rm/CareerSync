@@ -4,6 +4,7 @@ import Jobs from "./pages/jobs";
 import ProtectedRoute from "./components/protectedRoute";
 import Register from "./pages/Register";
 import Landing_page from "./pages/Landing_page";
+import Home_page from "./pages/Home_page";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
 
       <Route path="/login" element={<Login />} />
       <Route path="/Register" element={<Register/>}/>
+      <Route path="home_page" element={<Home_page/>}/>
       <Route
         path="/jobs"
         element={

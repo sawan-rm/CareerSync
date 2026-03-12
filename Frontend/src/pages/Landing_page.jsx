@@ -43,7 +43,7 @@ const Landing_page = () => {
 
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center mt-32">
-        <h2 className="text-5xl font-bold mb-6">Track Jobs Smarter 🚀</h2>
+        <h2 className="text-5xl font-bold mb-6">Track Jobs Smarter </h2>
 
         <p className="text-gray-400 max-w-xl mb-8">
           Manage job applications, interviews, and progress in one place.

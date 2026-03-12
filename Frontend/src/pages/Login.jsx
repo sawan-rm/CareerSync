@@ -2,6 +2,7 @@ import { LockKeyhole, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import api from "../Api/axios";
 import { useNavigate } from "react-router-dom";
+import Home_page from "./Home_page";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ const Login = () => {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
-      navigate("/jobs");
+      navigate("/home_page");
     } catch (err) {
       console.error(err);
       alert("Login failed");

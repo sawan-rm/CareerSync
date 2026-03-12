@@ -38,6 +38,9 @@ const Jobs = () => {
   }, [search]);
 
   /* ---------------- FETCH JOBS ---------------- */
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+
   const fetchJobs = useCallback(async () => {
     try {
       const res = await api.get("/jobs", {
@@ -49,13 +52,9 @@ const Jobs = () => {
         },
       });
 
-      const jobsData = Array.isArray(res.data)
-        ? res.data
-        : Array.isArray(res.data.jobs)
-          ? res.data.jobs
-          : [];
-
-      setJobs(jobsData);
+      setJobs(res.data.jobs);
+      setTotalPages(res.data.totalPages);
+      setTotal(res.data.total);
     } catch (err) {
       console.error("Error fetching jobs", err);
     }
@@ -245,13 +244,17 @@ const Jobs = () => {
 
       <hr />
 
+      <p className="text-gray-600 mb-4">
+        Showing {jobs.length} of {total} jobs
+      </p>
+
       {/* JOB LIST */}
       <div className="space-y-4">
         {jobs.length === 0 ? (
           <p className="text-gray-500">No jobs found</p>
         ) : (
           jobs.map((job) => {
-            const id = job._id || job.id;
+            const id = job.id || job._id; // handle both cases
 
             return (
               <div key={id} className="bg-white p-4 rounded-lg shadow">
@@ -295,9 +298,20 @@ const Jobs = () => {
                   </div>
                 ) : (
                   <div className="flex justify-between items-center">
-                    <div>
+                    <div className="space-y-1">
                       <h4 className="text-lg font-semibold">{job.company}</h4>
                       <p className="text-gray-600">{job.role}</p>
+
+                      <p className="text-sm text-gray-500">
+                        Applied on:{" "}
+                        {new Date(job.applied_date).toLocaleDateString()}
+                      </p>
+
+                      {job.notes && (
+                        <p className="text-sm text-gray-500 italic">
+                          Notes: {job.notes}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -344,7 +358,7 @@ const Jobs = () => {
         <span className="font-semibold">Page {page}</span>
 
         <button
-          disabled={jobs.length < LIMIT}
+          disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
           className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
         >
