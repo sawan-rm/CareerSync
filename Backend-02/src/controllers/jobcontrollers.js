@@ -102,6 +102,7 @@ const getJobs = async (req, res) => {
 //  get job status
 const getJobStats = async (req, res) => {
   const userId = req.userId;
+  // console.log("user id: ", userId);
 
   try {
     const [rows] = await pool.query(
